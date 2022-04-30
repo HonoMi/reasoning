@@ -1,46 +1,120 @@
-# libraries
-* ccg2lambda
-    - 自然文を命題に変換する．
-    - 証明
-    - 仮説推論
-* Coq
-    - 証明
-* open-david
-    - 仮説推論
+# logical reasoning
 
 
 
-# neural solver系
+
+# commonsense
+* ASER: A Large-scale Eventuality Knowledge Graph
+    * 一言で: 事象間因果関係のデータベースを作成した．巨大なテキストデータから，依存関係などを駆使して，自動で作成．
+    * 備考
+        * [HKUST-KnowComp/ASER](https://github.com/HKUST-KnowComp/ASER)
+* Benchmarking Commonsense Knowledge Base Population with an Effective Evaluation Dataset
+    * 一言で: 常識知識をテキストデータから自動で拾う(commonsense knowledge base population)ことの難しさを示した．
+    * 備考
+        - この仮定で，様々なcommonsense KB を一つのフォーマットにまとめており，そのデータも公開している．
+            * [HonoMi/CSKB-Population](https://github.com/HonoMi/CSKB-Population)
+        - **また，commonsense KBのまとめもあり，非常に有用．**
+* COMET: Commonsense Transformers for Automatic Knowledge Graph Construction
+    - 一言で: COMET論文
+* COMET-ATOMIC 2020: On Symbolic and Neural Commonsense Knowledge Graphs
+    - TransOMCS extends ASER
+        - 手法
+            - dependency parsingで取った
+        - 結果
+            - KGの精度が悪い
+            - COMETで学習させた場合，new entityが出てこない
+                - 精度が悪いせいだと結論づけている．
+
+
+
+# general
 * Neural Logic Machines
+    - 概要: ニューロベースのソルバーを提案．
+* Improving Coherence and Consistency in Neural Sequence Models with Dual-System, Neuro-Symbolic Reasoning
+    - ideas
+        - ここでのfilterの結果を報酬として強化学習するのはどうか．
+* Improving Coherence and Consistency in Neural Sequence Models with Dual-System, Neuro-Symbolic Reasoning
+    - 概要: 生成モデルは，logically inconsistentな文を生成してしまう．これを，後段のlogical reasonerで発見し，排除する．
+    - 評価
+        - 小さい世界(bAbI)で評価している．
+        - ruleは人手で作成．
+    - ideas
+        - 本手法のルールを，我々のcommonsense ruleに変える．
+        - 評価実験を流用する．
+            * commonsenseでやりたかったことに近い気がする．
+* Learning Explanatory Rules from Noisy Data
+    - 概要: 微分可能なILP (inductive logic programming)を提唱した．
+    - ideas
+        - ILPはabductionと近い．ILP x NLPは面白そうな方向性．我々もILPを使って推論ルールを抽出できないか．
+            - [transferred] ILPのお勉強をする．
+* Neuro-Symbolic Inductive Logic Programming with Logical Neural Networks
+    - 概要: LNN x ILP
+    - [todo] 読む．ILP x NLPのために．
 
 
 
+
+# RuleTaker (over natural language)
+* Transformers as Soft Reasoners over Language (RuleTaker)
+    - 概要: formal logicの前提と結論を入出力として与えることで，Transformerがtheorem provingを実現できることを示した．
+    - idea
+        - [todo] future workから発展させる．
+* Neural Unification for Logic Reasoning over Natural Language (NeuralUnifier)
+    - 概要: RuleTakerを，backward-chainingができるように拡張した．RuleTakerよりも良い．
+* ProofWriter: Generating Implications, Proofs, and Abductive Statements over Natural Language
+    - 概要: RuleTakerを，proofの生成ができるようにした．また，abductionもやっている(ただし，全ての仮説を試してうまくいったものを取る，というナイーブな手法)．
+    - 備考: PRoverより良いという．
+* PRover: Proof Generation for Interpretable Reasoning over Rules
+    - 概要: RuleTakerを，proofの生成ができるようにした．
+* Leap-Of-Thought: Teaching Pre-Trained Models to Systematically Reason Over Implicit Knowledge
+    - 概要: 推論に当たって，LMに埋め込まれている知識も使えることを示した．
+
+
+
+
+# logical neural networks (IBM)
+* Logical Neural Networks
+    - 概要: ニューロベースのソルバーを提案．従来手法より色々良い．
+* A Semantic Parsing and Reasoning-Based Approach to Knowledge Base Question Answering
+    - 概要: AMR -> AMR to logic -> LNNで含意判定 というパイプラインによって，データ量少ない場合でも良い性能が出る質問応答システムを構築した．
+        - 各処理が使い回せるので，end-to-endデータが無くてもよい，ということ．
+    - 手法
+        - AMR to Logic module is a rule-based system
+    - 備考
+        - AMR to Logicでなくとも，CCGパーザとかでも良い?
+* Leveraging Abstract Meaning Representation for Knowledge Base Question Answering
+    - 概要: "A Semantic Parsing and" と同様．
+* Neuro-Symbolic Reinforcement Learning with First-Order Logic
+    - 概要: text-worldにおいて，観測テキストから行動を導く時にLNNを使う．
+    - [todo] ちゃんと読む．この方向性は興味があるため．
+* Reinforcement Learning with External Knowledge by using Logical Neural Networks
+    - 概要: text-worldにおいて，観測テキストから行動を導く時にLNNを使う．
+    - [todo] ちゃんと読む．この方向性は興味があるため．
 
 
 
 
 # abductive reasoning
-* [todo] open-question
-    - ルールを十分量獲得できるか？
-    - ルールをうまく組み合わせられるか？
-        - 教師あり
-            * reasoning データセットの
-        - 教師なし
-            * 教示は？
-    * ルールを有限時間で探索できるか？
-    - ルールをrefineできるか？
-        - 文脈による詳細化
-        - ルールのスコアの精度を上げる
-    * open world仮説にできるか？
-        - 自然言語処理の場合は，命題の数は無限なので，open world仮説が必要．
 
-### general
-* 仮説推論と充足可能問題、BERTによる推理小説の知識処理
-    - 概要: KG challengeを仮説推論で解く
-    - 手法
-        * 背景知識はタスクからgiven (e.g., motivate(x), invade(x) -> murder(s, y))
-        * 観測事実は，テキストから自動で抽出．
-        * 仮説推論器としてopen-davidを採用
+## general
+* Generating Hypothetical Events for Abductive Inference
+    - 概要: alpha-NLIを解く為に，仮説に続く事象を生成し，その事象と選択肢事象と類似度を用いて選択する．事象生成のために，TIMETRAVELコーパス(counter-factualなスクリプトを含むデータセット)で学習．
+* ABDUCTIVE COMMONSENSE REASONING
+    - 概要: 仮説推論タスクであるalha-NLI/NLGを提唱．
+* Language Generation with Multi-Hop Reasoning on Commonsense Knowledge Graph
+    - 概要: タイトルの通り．alpha-NLGなどで検証している．
+    - [todo] きちんと読む．multi-hopは，ベースラインになるかもしれない．
+* Hybrid Autoregressive Inference for Scalable Multi-hop Explanation Regeneration
+    - 概要: science x abduction を手法Xで解いた．手法Xは，仮説の選択をautoregressiveに行う．
+    - [todo] きちんと読む．
+        * multi-hopは，ベースラインになるかもしれない．
+        * タスクは評価に使える．
+* Learning as Abduction: Trainable Natural Logic Theorem Prover for Natural Language Inference
+    - 概要: NLIの含意関係を観測として，語彙関係(guy->human)をabduceする．
+    - [todo] きちんと読む．タスク設定は使えるかもしれない．
+
+
+## 乾研
 * 言語処理のための仮説推論エンジン Phillip
     - 主要な課題は以下だという
         - Learning
@@ -59,7 +133,14 @@
 * 共参照解析のための事象間関係知識の文脈化
     - 文脈付きでルールを構築する．
 
-### CCG2lambda
+## CCG2lambda (野村)
+* 仮説推論と充足可能問題、BERTによる推理小説の知識処理
+    - 概要: KG challengeを仮説推論で解く
+    - 手法
+        * 背景知識はタスクからgiven (e.g., motivate(x), invade(x) -> murder(s, y))
+        * 観測事実は，テキストから自動で抽出．
+        * 仮説推論器としてopen-davidを採用
+
 * 含意関係認識による金融ドキュメントチェックへの取り組み
     - 概要
         * 金融ドメインにおいて，論理推論を用いた含意関係認識器を作成した．
@@ -72,7 +153,7 @@
             - ただし，この仮説自体は，モデルに取り込んでいない．
             - 実応用時は，担当者がこの仮説を人手で確認する．
 
-### abduction for semi-supervised learning
+## abduction for semi-supervised learning
 * Semi-Supervised Abductive Learning and Its Application to Theft Judicial Sentencing
     - 概要
         - ドメイン知識がパラメータ + 述語論理の形で蓄えれているときに，少量ラベルから，pseudo-labelの付与 => パラメータの更新 => abductionを用いてpseudo-labelを訂正 => と繰り返すことで，良いモデルと述語論理を交互に学修する．
@@ -93,4 +174,3 @@
         - Bridging論文と著者が同じ．
 * Bridging Machine Learning and Logical Reasoning by Abductive Learning
     - Semi-Supervised の著者と同じ．
-
