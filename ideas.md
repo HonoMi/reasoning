@@ -1,30 +1,34 @@
 # todo
 * **落とし所として，デモなども考慮に入れること．ここのテーマは難しいので，フル評価ができるかは怪しい．**
-* 戦略
-    1. 情報を仕入れる
-        * 何のためにやるかというと，我々が選ぶ課題がmake senseなのかを確かめるため．
-            - e.g.) 導出させる．
-        * 論理プログラミングの本 satなど
-        * 前提知識のお勉強
-            * 記号論理 => 述語論理 => 様相論理
-            * 論理プログラミング，特にILPを勉強する．
-                - http://redwood.cs.ttu.edu/~mgelfond/PAPERS/survey.pdf
-                - 記号論理，数理論理学に近い．
-                - 不完全性定理もやる．
-            * オートマトン
-        * [論文の精読](./reviews.md)
-            - [todo] なところをやる．
-        * [Prolog Programming for Artificial Intelligence](https://www.amazon.co.jp/Prolog-Programming-Artificial-Intelligence-4th/dp/0321417461/)
-            - 日本語だと第二版までだが，第三版以降はILPやAIも追加されてすごいらしい．
-    2. 以下の順番で研究を進める
-        1. commonsense
-            - 他と独立してできるため．
-            - また，一番やりやすい．
-        2. logical reasoning
-            - 他と独立してできる．
-            - logical reasoningで何ができるか，"慣れ"させられる．
-        3. natural langauage reasoning (deduction/abduction)
-            - deductionの方が簡単?
+
+## 戦略
+1. 情報を仕入れる
+    * 何のためにやるかというと，我々が選ぶ課題がmake senseなのかを確かめるため．
+        - e.g.) 導出させる．
+    * 論理プログラミングの本 satなど
+    * 前提知識のお勉強
+        * 記号論理 => 述語論理 => 様相論理
+        * 論理プログラミング，特にILPを勉強する．
+            - http://redwood.cs.ttu.edu/~mgelfond/PAPERS/survey.pdf
+            - 記号論理，数理論理学に近い．
+            - 不完全性定理もやる．
+        * オートマトン
+    * [論文の精読](./reviews.md)
+        - [todo] なところをやる．
+    * [Prolog Programming for Artificial Intelligence](https://www.amazon.co.jp/Prolog-Programming-Artificial-Intelligence-4th/dp/0321417461/)
+        - 日本語だと第二版までだが，第三版以降はILPやAIも追加されてすごいらしい．
+1. 話を整理する．
+    - ハイレベルに各研究を見る．
+    - 我々の研究が意味をもっているか，意味を持つには何を仮定に置いているか，仮定は正しいか，を精査する．
+2. 以下の順番で研究を進める
+    1. commonsense
+        - 他と独立してできるため．
+        - また，一番やりやすい．
+    2. logical reasoning
+        - 他と独立してできる．
+        - logical reasoningで何ができるか，"慣れ"させられる．
+    3. natural langauage reasoning (deduction/abduction)
+        - deductionの方が簡単?
 
 
 
