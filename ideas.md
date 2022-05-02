@@ -1,4 +1,5 @@
 # todo
+* [todo](./reviews.md)を読む．まだ読んでいない先行研究があり，そこからideaを出せそう
 * **落とし所として，デモなども考慮に入れること．ここのテーマは難しいので，フル評価ができるかは怪しい．**
 
 ## 戦略
@@ -21,18 +22,62 @@
     - ハイレベルに各研究を見る．
     - 我々の研究が意味をもっているか，意味を持つには何を仮定に置いているか，仮定は正しいか，を精査する．
 2. 以下の順番で研究を進める
-    1. commonsense
-        - 他と独立してできるため．
-        - また，一番やりやすい．
-    2. logical reasoning
-        - 他と独立してできる．
-        - logical reasoningで何ができるか，"慣れ"させられる．
-    3. natural langauage reasoning (deduction/abduction)
-        - deductionの方が簡単?
+    1. [commonsense LM]($PROJECTS/commonsense-lanugage-model/README.md)
+    2. その他の研究を進めるためのベースリポジトリを動かしてみる．
 
 
 
 # 考察
+
+## ハイレベルな課題
+* どのようにreasoningするか(どのように学習させるか)．
+    - deduction
+    - abduction
+    - どのようにルールを組み合わせるか?
+        - ナイーブにやると発散
+        - また，ルールが増えるとTransformerのmax_lenに乗らなくなる
+        - 探索の効率
+    - 証明
+        - forward chainig
+        - backward chainig
+        - others: 何か効率の良いアルゴリズムはあるか？
+        * もっと複雑な証明ができるか？
+            - 複雑とは？
+                - length
+                - predicateの種類数
+                - 一度に組み合わせないといけないpredicateの数
+                - ファクトの数
+                - n項述語のn
+                - template言語でない．
+                - distractorがたくさん．
+            - RuleTaker論文のfuture workに書かれている．
+    - zero-shot
+        - CLUTRRはILPのタスクだが，これをzero-shotで解きたい．すなわち， 1. ruleの獲得 2. reasoningの学習 の両方を事前学習しておきたい．
+            - few-shotではダメ．commonsense は無限にあるので，commonsense reasoning したいならば，few-shotすら許されないはず．
+    - オープンドメインで何をやるか？
+* どのようにルールを獲得するか？
+    - from dataset (e.g., CLUTRR)
+        - ILP
+    - pre-training
+        - commonsense
+    - ルールの精緻化
+        - 文脈による詳細化
+        - ルールのスコアの精度を上げる
+* abductionのopen-question (by 乾研)
+    - ルールを十分量獲得できるか？
+    - ルールをうまく組み合わせられるか？
+        - 教師あり
+            * reasoning データセットの
+        - 教師なし
+            * 教示は？
+    * ルールを有限時間で探索できるか？
+    - ルールをrefineできるか？
+        - 文脈による詳細化
+        - ルールのスコアの精度を上げる
+    * open world仮説にできるか？
+        - 自然言語処理の場合は，命題の数は無限なので，open world仮説が必要．
+    * 何ができるようになるのか？
+
 
 ## 評価案
 * CLUTRR
@@ -72,30 +117,93 @@
 
 
 
-# ideas
 
-## logical reasoning
-* 記号論理×自然言語処理のはじめてのplmを出す．
-* 何をやりたいか？
-    - CLUTRRみたいなのをzero-shotで解きたい．
-        - CLUTRRはILPのタスクだが，これをzero-shotで解きたい．すなわち，ruleの学習とreasoningnの学習は，事前に済ませておく．
-* 「TransformerはStackを模擬できない」は，logical inferneceする上で課題になるか？ なるなら，解決が必要．
-    - [pending] 少し難しいので．ただし，not not not みたいなのはTransformerは苦手かもしれない．それを無視して研究を進めると，うまくいかないか，reviewerに突っ込まれるかもしれない．
-    - not not not not みたいなのは認識できない可能性が高い．
-    - 自然言語では問題にならない? not not not みたいなのは現れないから．
-    - 理論的には，「decoderステップが無限」「infinite precision」などの仮定を置けば，Transformersはturing完全である．一方で，これを置かないと，Turing完全では無いという．
-    - On the Ability and Limitations of Transformers to Recognize Formal Languages
-        * counter languageの一部しかうまくいかないという．not not not は認識できないか？
-* logical reasoning
+
+# logical reasoning
+**研究途上でデモ論文を出すこと．**
+* **根本的な疑問: classicalなアルゴリズム(e.g., PrologのDFS solver)に対して，ニューラルネットワークによる言語処理ユニット(ファクトマッチング，ルールの選択)を追加するだけよいのでは？**
+
+* modular => end-to-endが不要，モジュールを再利用可能 => オープンドメインに適用できる．
+
+* factは検索にすればスケールする．
+* 導出規則の適用は，順不同．これは教師あり学習では学べない(順序が強制される)のでは？
+* 強化学習の良い点
+    - 高速になるかも．
+    - ロバスト．導出規則の適用順序など，様々な揺動が加わるから．
+
+* 強化学習によるsolver
+    - todo
+        * 古典solverをニューロで模擬しただけの何かを作り出すだけになるのでは？
+    - 手法
+        - 行動
+            - forward chainingを行う．
+            - backward chainingを行う．
+            - 答えを出す．
+            - max_lenに達したら，捨てる．
+        - 報酬
+            - 証明中に含まれる導出を出したら加点
+            - 含まれない導出を出したら原点
+            - 答えを出したら加点
+    - solverの模倣学習から始めるべき．
+    - 何ができるようになるか？
+        - 効率的に解ける．
+            - 計算コストの発散を防げる．
+            - transformerのmax_len対応．
+* 記号推論に適した学習手法の提案
+    - 効果
+        * n項述語など，複雑なルールを学習させることができる．
+        * 任意のテキストデータを使えるので，データセットを無限にできる．
+        * 自然言語の揺らぎに強くなる．
+        * 汎化性能が上がる．
+            * zero-shot性能が上がる．
+    - 手法
+        * いや，unificationは？
+            * coreferenceか．
+        * いくつかのステップに分解することができる．curriculum learningする．それぞれはseparateして学習すべき．
+            - 論理推論の学習
+            - 論理記号と自然言語のマッピング
+                - 記号とのマッピングはカバレッジが低いという課題がありそう．これへの対策として，事前にcommonsense ruleを埋め込んだモデルにおいて，commonsense ruleを使った推論を解かせる．
+                    * 関係抽出で，関係パターンとその両側を交互に学習させるようなものに近い．
+            - ルールの学習
+        * 記号論理の性質に合った学習方法を提案する．
+            - 先行研究
+                - 自然文でやっていた．
+                - 意味的につながりのあるルールを用いて，汎化させようとしていた．よって，
+                    - データ量が小さくなりがち．
+                    - また，記号論理特有の原則(意味に依らないsyntaxだけで導出できる)を学習するのに効率が悪い．
+                - 端的に言うと，命題論理のsemanticを意識してしまっていた．
+            - しかし，
+                - (A, A -> B) -> B はAやBの"内容に依らずに"成立する．
+                    * 先行研究では，syster parent など，意味的なつながりのあるルールで学習しようとしていた．
+            - 原則
+                - 記号論理
+                    - 命題(A, B)     : 任意の内容でよい．
+                    - ルール (A -> B): 任意の内容で良い．
+                - 自然言語
+                    - 命題(A, B)
+                        * 文法も意味も正しい必要がある．
+                    - ルール
+                        * 意味的につながりがある必要がある．(e.g., commonsense)
+            - 手法
+                1. A, B には適当な文を入れる．
+                    * 文を入れたることにより，文法・意味が通るものが入る．
+                2. A, B によらないように，encoderをfreezeする．
+                    - freezeさせたら学習すべきパラメータが無くなってしまうのでは？
+                3. distractor文も混ぜる．関係ない命題に依存しないようにするため．
+                3. ルールには，commonsenseを使う？
+                    - 「意味的につながりがある必要がある」に対処．
+                    - これは，知識を埋め込む話なので，推論を学習させる話とは別か．
+* Transformerは(複雑な)記号論理を学習しきれるのか．
+    * 背景
+        - これは，自然言語への適用を意識したものであり，簡単なルールのみ．
+        - 一方，記号論理では，少数の公理を元に，無限の導出を行える．
+        - よって，自然な質問として，「Transformerがこれをおこなえるか？」．これに答える．
+        - 一方，自然な質問として，
     * 背景
         - LNNなどは，logic専用のニューラルネットワークを構築
         - このlogical inserve extreme = 学習データを用意して論理を学ばせる
         - 先行研究はある程度，これができることを示したが，複雑な論理を扱えているかはまだ未知数．
-    - [todo]
-        - 教科書: 様相論理など．
-        - 先行研究調査
-        - 「Transformerで記号論理が解ける」という仮定が，先行研究で示されたTransformerの理論的・経験的な挙動と不一致を起こさないか，を考える．
-    - もっと複雑な(何ステップも必要な)論理を解けるか？
+    * 質問: 
         - 解けるなら，なぜか？
             - 例えば，公理を帰納的に学べるか？
             - 逆に，公理を教え込んで様々な証明を解けるようになるのか？
@@ -105,27 +213,22 @@
                 - また，一般的な公式もある．
             - transformerの能力を確かめることが目的．
                 - そうすると，理論とも結びつけたい．
-    - 別の論理体系を学べるか？
-        - 記号論理
-        - 述語論理
-        - 様相論理
     - 手法
         1. solverの過程を教師あり学習
         2. 報酬だけを頼りに強化学習
-* 自然言語との統合をどうやるか？
-    - A みたいな記号だと，自然言語まで汎化するかは怪しい．
-    - 任意のevent表現を命題として扱えないか．
+    - 備考
+        - 他の論理体系を学習させてみる．
+            - [accept] これだけでは研究にならないから，「Transformerは記号論理を学習しきれるのか．」と一緒にやる．
+            - 対象
+                - 記号論理
+                - 述語論理
+                - 様相論理
+                - 時相論理
 
-## natural language reasoning
-
-
-### deduction
-* natural language prolog
-    - [todo] prologの用途を調べる．教科書でよい．
-    - 論理推論器は何を使うか？
-        * CCG2lambdaによって導出 => Transformerを半教師あり学習
-    - 要は，「自然言語でdeductionができるか？」という話に落ちる気がする．
-* LeapOfThought x 推論ルール
+## どのようにルールを使うか？
+* [commonsense LM]($PROJECTS/commonsense-lanugage-model/docs/ideas.md)
+* 推論ルールを LeapOfThoughtする．
+    - [accept] 課題がたいへん良質．
     - 背景
         - LeapOfThought, 埋め込まれたfactは使えているが，"埋め込まれたルール"は使えていない．
         - そこで，ルールが使えるかどうかを調査する．
@@ -138,43 +241,17 @@
             - よって，やはり，「様々なルールを組み合わせて最終的な結論を得られるか？」という評価が必要．
                 - これもストーリー生成に近いのでは？
                 - [todo] また，これはすなわち，"natural language reasoning"の研究に近いのでは？
-* natural language reasoning
+* commonsense reasoning with commonsense rule and reasoning ability
+    - [accept] 良い．しかも，「推論ルールを LeapOfThoughtする．」と一緒にできる．
     - 背景
-        - 自然言語での論理的な推論は，AIの聖杯．
-        - 先行研究によって，小さい規模の統制言語(=小規模のルール，かつ，文脈無し)ならうまくいく
-        - 一方，大規模かつ統制されていない自然言語言語でうまくいくか不明．
-            - 前者は，先行研究からの流れ．後者は，乾研の研究みたいなところからの流れ．
-            - つまり，commonsenseでうまくいくか不明ってこと．
-        - そこで
-            - 大規模テキストデータでatomicなルールを，言語モデルによってatomicなルールを学習
-                - coreference
-            - 同じネットワークで，abductive / deductive reasoningを学習
-    - 研究を進める上で埋めるべき観点
-        - 何が出来るようになるのか?
-            - deduction / abduction
-            - まずは，単にデモでよいか？
-            - COMETと違うことができる？
-            - "間"が出せる．
-            - "前提条件"が出せる．
-        - データは？
-            * 教師ありデータセットを作成する．
-        - 教示は？
-            - alpha NLG
-            - LeapOfThought形式
-            - データセットを作成する．
+        - LeapOfThoughtで，LMに埋め込まれた知識を用いてreasoningできることが分かった．
+        - しかし，LMは汎用的な学習をしているため，ルールを効率的に学習できていない可能性がある．
+    * 手法
+        - commonsense rule を学習したLMを構築．
+        - "同じLMで"，abductive / deductive reasoningを学習
+    - 評価
+        - NLIで上がる．
 
-### abduction
-* [todo] open-questionを攻める．
-    - ルールを十分量獲得できるか？
-    - ルールをうまく組み合わせられるか？
-        - 教師あり
-            * reasoning データセットの
-        - 教師なし
-            * 教示は？
-    * ルールを有限時間で探索できるか？
-    - ルールをrefineできるか？
-        - 文脈による詳細化
-        - ルールのスコアの精度を上げる
-    * open world仮説にできるか？
-        - 自然言語処理の場合は，命題の数は無限なので，open world仮説が必要．
-    * 何ができるようになるのか？
+## additionsl
+* [accept] 自然言語 x 記号推論の初めてのPLMを出す
+    - [accept] これは，additionalである．
