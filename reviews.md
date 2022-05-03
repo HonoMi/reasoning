@@ -105,11 +105,13 @@
     * ソースコード
         * [データセットは公開されている．](https://allenai.org/data/proofwriter)
         * しかし，[リポジトリは公開されていない．](https://github.com/allenai/ruletaker/issues/26)
+        * FaiRR に乗った方が良い．
 * Leap-Of-Thought: Teaching Pre-Trained Models to Systematically Reason Over Implicit Knowledge
     - 概要: 推論に当たって，LMに埋め込まれている知識も使えることを示した．
     - ソースコード
         * [alontalmor/LeapOfThought](https://github.com/alontalmor/LeapOfThought)
             * 全て公開されている．
+
 ## RuleTakerからの派生研究
 * Neural Unification for Logic Reasoning over Natural Language (NeuralUnifier)
     - 概要:
@@ -131,7 +133,7 @@
             - 全て公開されている．
 * PRover: Proof Generation for Interpretable Reasoning over Rules
     - 概要: RuleTakerを，proofの生成ができるようにした．「各導出が証明に含まれるべきかどうか」を分類し，整数計画問題で組み合わせる．
-    - あまり詳しく野読んでいない．ProofWriterが上位互換っぽいから．
+    - あまり詳しくは読んでいない．ProofWriterが上位互換っぽいから．
 * FaiRR: Faithful and Robust Deductive Reasoning over Natural Language
     - 概要:
         * ProofWriterをmodularにすることで，
@@ -140,16 +142,13 @@
                 - c.f., ProofWriterはend-to-end generation
             * 関連ルールだけをselectするので，探索が効率的になった．
     - [ideas]
-        - 本論文に載れば，e2eと性能で勝負する必要が無くなる．信頼性を推せるから．
+        - [tood] 本論文に載れば，e2eと性能で勝負する必要が無くなる．信頼性を推せるから．
     - 備考
         * ACL2022
     * ソースコード
         * [リポジトリ](https://github.com/ink-usc/fairr)
             - 全て公開されている．
-            - ProofWriterにのっている．
-
-
-
+            - ProofWriterに乗っかっている．
 
 
 
