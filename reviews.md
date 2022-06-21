@@ -1,4 +1,111 @@
 # logical reasoning by statistical approach
+
+## RuleTaker系列
+* Transformers as Soft Reasoners over Language (RuleTaker)
+    - 概要: formal logicの前提と結論を入出力として与えることで，Transformerがtheorem provingを実現できることを示した．
+        - length 方向にもgeneralizeしているように見える．
+        - ただ，簡単な推論だけ．
+    - 評価
+        - 自分で作ったデータセット
+    - [discussions]
+        - 長さ方向への汎化はできているように見える．
+        - ルールやファクトの言い換えには，ゼロショット対応できていない．
+            - これを事前学習できないか？
+    - ideas
+        - [transferred] theoryが簡単すぎる．
+            * ファクトの数
+            * 一度に考慮すべきルールの数
+            * ルールの種類
+            * n項述語
+        - [transferred] 自然言語への対応
+            - ルールやファクトの言い換えを事前学習したい．
+            - また，ルールがless unclearな言語も取り入れたい．
+        - [rejected] ルールが明示されない場合もinferしたい．
+            - これは，LeapOfThoughtか．
+    - **Future workがしっかりしているので，読むべき．**
+    * ソースコード
+        * [allenai/ruletaker](https://github.com/allenai/ruletaker)
+            * theory generatorが公開されている．
+* PRover: Proof Generation for Interpretable Reasoning over Rules
+    - 概要: RuleTakerを，proofの生成ができるようにした．「各導出が証明に含まれるべきかどうか」を分類し，整数計画問題で組み合わせる．
+    - 評価
+        - CWA + OWA
+    - あまり詳しくは読んでいない．ProofWriterが上位互換っぽいから．
+    - ソースコード
+        * [swarnaHub/PRover](https://github.com/swarnaHub/PRover)
+            - 全て公開されている．
+            - RuleTakerデータセットを使っている．
+* ProofWriter: Generating Implications, Proofs, and Abductive Statements over Natural Language
+    - 概要:
+        * implicationの1-step生成を繰り返すことにより，proofを生成しつつ，解を得る．length 方向に良くgeneralizaする．
+    - 評価
+        * RuleTakerと同じデータセット．
+            - CWA + OWA
+        * ベースラインはPRover
+    - ideas
+        * [transferred] 「全ての導出を網羅する」は効率が悪く，大きな理論ではmax_lenからはみ出る．
+            - 強化学習で必要な操作だけにできないか．
+    - 備考
+    * ソースコード
+        * [データセットは公開されている．](https://allenai.org/data/proofwriter)
+        * しかし，[リポジトリは公開されていない．](https://github.com/allenai/ruletaker/issues/26)
+        * FaiRR に乗った方が良い．
+* Neural Unification for Logic Reasoning over Natural Language (NeuralUnifier)
+    - 概要:
+        * NNにbackward chainingを模擬させた．
+        * とてもよくlength generalizationする．(RuleTakerよりももっと)
+    - 評価
+        - RuleTakerデータセットを使う．
+            - CWA
+        - ベースラインはRuleTaker
+    - [discussions]
+        - end-to-endであることに注意．
+        - この手法は，以下の強い仮定を置いている
+            1. 問題はbackward chainingで解ける．
+                * 問題の規模が増えたら，探索が発散して解けないように思う．
+    - [transferred]
+        - length normalizationしているからこれだけでいいんだっけ？
+            - 全てのlogicはbackward chainingで解ける？
+                * [transferred] 複雑なルールではダメだろう．
+    - ソースコード
+        * [IBM/Neural_Unification](https://github.com/IBM/Neural_Unification_for_Logic_Reasoning_over_Language)
+            - 全て公開されている．
+            - ruletakerデータセットを使っている．
+* FaiRR: Faithful and Robust Deductive Reasoning over Natural Language
+    - 概要:
+        * ProofWriterをmodularにすることで，
+            * 導出過程を信頼できる(透明性が保てる)ようにした．
+            * 表層の変化にロバストになった．各moduleの入力が限られるので，自分の役割のみをこなすから．
+                - c.f., ProofWriterはend-to-end generation
+            * 関連ルールだけをselectするので，探索が効率的になった．
+    - [ideas]
+        - [todo] 本論文に載れば，e2eと性能で勝負する必要が無くなる．信頼性を推せるから．
+        - [todo] subject robustness (=変項x)が低いのは，本質的な課題である気がする．
+            - おそらく，「任意の記号」というお気持ちが現れていないからではないか．Johnなどを使っているため，何かJohnの表層につられてしまっているのではないか．
+    - 評価
+        - RuleTakerデータセットを使う．また，subject robustnessなるデータセットも自作している．
+            - CWA + OWA
+        - ベースラインはProofWriter
+    - 備考
+        * ACL2022
+    * ソースコード
+        * [リポジトリ](https://github.com/ink-usc/fairr)
+            - 全て公開されている．
+            - ProofWriterに乗っかっている．
+
+## others
+* Leap-Of-Thought: Teaching Pre-Trained Models to Systematically Reason Over Implicit Knowledge
+    - 概要: 推論に当たって，LMに埋め込まれている知識(ファクト)も使えることを示した．
+    - 手法
+        1. is_type(X, Y), has_property(Y, Z) => has_property(X, Z) (ture/false) というデータをたくさん作る．
+            - CONCEPT NETなどを使う．
+        2. is_type(X, Y)は隠す．
+        3. 答えを解かせる． すると，is_type(X, Y)が明示されていないにもかかわらず，解ける． => LM内部のis_type(X, Y)というファクトを使えている．
+    - ideas
+        - 推論ルールは固定で，2つしか使えていない．オープンドメインだと，困る？
+    - ソースコード
+        * [alontalmor/LeapOfThought](https://github.com/alontalmor/LeapOfThought)
+            * 全て公開されている．
 * Critical Thinking for Language Models
     - 概要: 演繹規則を学ぶためのデータセットを作成．また，GPT2に学習させた際に，1. 少数の規則の学習のみで複雑な規則へと汎化できること 2. NLIタスクで性能が上がること，を確認．
     - 手法
@@ -42,7 +149,7 @@
         * 関連論文が非常によくまとまっている．参考にするべき．
         * ソースコード
             - [debatelab/aacorpus](https://github.com/debatelab/aacorpus)
-                - 評価スクリプトが全て公開されているわけではない．少しコストが高そう．
+                - theory generator / pre-trained modelが公開されている．
 * Measuring Systematic Generalization in Neural Proof Generation with Transformers
     - 概要: CLUTRR taskにおいて，GPTでtheorem generationをしてみた．長さ方向へのgeneralizationがうまくいかない．
     - [discussions]
@@ -65,91 +172,6 @@
     * ソースコード
         * [NicolasAG/SGinPG](https://github.com/NicolasAG/SGinPG)
             - 全て公開されている．
-            * 論文の評価設定がとてもしっかりしている．再利用できそう．
-
-## RuleTaker
-* Transformers as Soft Reasoners over Language (RuleTaker)
-    - 概要: formal logicの前提と結論を入出力として与えることで，Transformerがtheorem provingを実現できることを示した．
-        - length 方向にもgeneralizeしているように見える．
-        - ただ，簡単な推論だけ．
-    - 評価
-        - 自分で作ったデータセット
-    - [discussions]
-        - 長さ方向への汎化はできているように見える．
-        - ルールやファクトの言い換えには，ゼロショット対応できていない．
-            - これを事前学習できないか？
-    - ideas
-        - [transferred] theoryが簡単すぎる．
-            * ファクトの数
-            * 一度に考慮すべきルールの数
-            * ルールの種類
-            * n項述語
-        - [transferred] 自然言語への対応
-            - ルールやファクトの言い換えを事前学習したい．
-            - また，ルールがless unclearな言語も取り入れたい．
-        - [rejected] ルールが明示されない場合もinferしたい．
-            - これは，LeapOfThoughtか．
-    - **Future workがしっかりしているので，読むべき．**
-    * ソースコード
-        * [allenai/ruletaker](https://github.com/allenai/ruletaker)
-            * 全て公開されている．
-* ProofWriter: Generating Implications, Proofs, and Abductive Statements over Natural Language
-    - 概要:
-        * implicationの1-step生成を繰り返すことにより，proofを生成しつつ，解を得る．length 方向に良くgeneralizaする．
-    - 評価: RuleTakerと同じデータセット．
-    - ideas
-        * [transferred] 「全ての導出を網羅する」は効率が悪く，大きな理論ではmax_lenからはみ出る．
-            - 強化学習で必要な操作だけにできないか．
-    - 備考
-        * PRoverより良いという．
-    * ソースコード
-        * [データセットは公開されている．](https://allenai.org/data/proofwriter)
-        * しかし，[リポジトリは公開されていない．](https://github.com/allenai/ruletaker/issues/26)
-        * FaiRR に乗った方が良い．
-* Leap-Of-Thought: Teaching Pre-Trained Models to Systematically Reason Over Implicit Knowledge
-    - 概要: 推論に当たって，LMに埋め込まれている知識も使えることを示した．
-    - ソースコード
-        * [alontalmor/LeapOfThought](https://github.com/alontalmor/LeapOfThought)
-            * 全て公開されている．
-
-## RuleTakerからの派生研究
-* Neural Unification for Logic Reasoning over Natural Language (NeuralUnifier)
-    - 概要:
-        * NNにbackward chainingを模擬させた．
-        * とてもよくlength generalizationする．(RuleTakerよりももっと)
-    - 評価
-        - RuleTakerデータセットも使っている．
-    - [discussions]
-        - end-to-endであることに注意．
-        - この手法は，以下の強い仮定を置いている
-            1. 問題はbackward chainingで解ける．
-                * 問題の規模が増えたら，探索が発散して解けないように思う．
-    - [transferred]
-        - length normalizationしているからこれだけでいいんだっけ？
-            - 全てのlogicはbackward chainingで解ける？
-                * [transferred] 複雑なルールではダメだろう．
-    - ソースコード
-        * [IBM/Neural_Unification](https://github.com/IBM/Neural_Unification_for_Logic_Reasoning_over_Language)
-            - 全て公開されている．
-* PRover: Proof Generation for Interpretable Reasoning over Rules
-    - 概要: RuleTakerを，proofの生成ができるようにした．「各導出が証明に含まれるべきかどうか」を分類し，整数計画問題で組み合わせる．
-    - あまり詳しくは読んでいない．ProofWriterが上位互換っぽいから．
-* FaiRR: Faithful and Robust Deductive Reasoning over Natural Language
-    - 概要:
-        * ProofWriterをmodularにすることで，
-            * 導出過程を信頼できる(透明性が保てる)ようにした．
-            * 表層の変化にロバストになった．各moduleの入力が限られるので，自分の役割のみをこなすから．
-                - c.f., ProofWriterはend-to-end generation
-            * 関連ルールだけをselectするので，探索が効率的になった．
-    - [ideas]
-        - [tood] 本論文に載れば，e2eと性能で勝負する必要が無くなる．信頼性を推せるから．
-    - 備考
-        * ACL2022
-    * ソースコード
-        * [リポジトリ](https://github.com/ink-usc/fairr)
-            - 全て公開されている．
-            - ProofWriterに乗っかっている．
-
 
 
 # dataset

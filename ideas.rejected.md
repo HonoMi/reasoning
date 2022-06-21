@@ -1,3 +1,4 @@
+# ideas.rejected
 * 「TransformerはStackを模擬できない」は，logical inferneceする上で課題になるか？ なるなら，解決が必要．
     - [rejected]
         * 我々の研究をやる上では，LSTMを上にのせて対応する．
@@ -8,4 +9,3 @@
     - 理論的には，「decoderステップが無限」「infinite precision」などの仮定を置けば，Transformersはturing完全である．一方で，これを置かないと，Turing完全では無いという．
     - On the Ability and Limitations of Transformers to Recognize Formal Languages
         * counter languageの一部しかうまくいかないという．not not not は認識できないか？
-
