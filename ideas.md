@@ -1,15 +1,14 @@
 # todo
-* step by step論文はデモがあるという．これを試す．
-* reasoning の先行研究を調査した方が良いのでは？
-* (論理学の本を一通り復習したら) 研究ideaを出す．
-* [todo](./reviews.md)を読む．まだ読んでいない先行研究があり，そこからideaを出せそう
-* 研究戦略
-    - 優先
-         * [commonsense LM]($PROJECTS/commonsense-lanugage-model/README.md)
-         * 形式主義学習
-         * natural language injection
-         * カリキュラム学習
-    * 落とし所として，デモなども考慮に入れること．ここのテーマは難しいので，フル評価ができるかは怪しい．
+* (論理学の本を一通り復習したら) 本の内容に従い，研究ideaを出す．
+* もっと詳しい資料を探す．
+    * [情報科学における論理](https://www.amazon.co.jp/dp/4535608148/)
+    * 英語の本
+    * web上の資料
+* "研究戦略"
+* 先行研究調査
+    * step by step 論文とその先行研究を調査する．
+    * また，step by step論文はデモがあるという．どれくらいできるか見てみる．
+    * [todo](./reviews.md)を読む．まだ読んでいない先行研究があり，そこからideaを出せそう
 
 ## お勉強
 * [Prolog Programming for Artificial Intelligence](https://www.amazon.co.jp/Prolog-Programming-Artificial-Intelligence-4th/dp/0321417461/)
@@ -17,116 +16,18 @@
 
 
 
-# 考察
-
-## ハイレベルな課題
-* どのようにreasoningするか(どのように学習させるか)．
-    - deduction
-    - abduction
-    - どのようにルールを組み合わせるか?
-        - ナイーブにやると発散
-        - また，ルールが増えるとTransformerのmax_lenに乗らなくなる
-        - 探索の効率
-    - 証明
-        - forward chainig
-        - backward chainig
-        - others: 何か効率の良いアルゴリズムはあるか？
-        * もっと複雑な証明ができるか？
-            - 複雑とは？
-                - length
-                - predicateの種類数
-                - 一度に組み合わせないといけないpredicateの数
-                - ファクトの数
-                - n項述語のn
-                - template言語でない．
-                - distractorがたくさん．
-            - RuleTaker論文のfuture workに書かれている．
-    - zero-shot
-        - CLUTRRはILPのタスクだが，これをzero-shotで解きたい．すなわち， 1. ruleの獲得 2. reasoningの学習 の両方を事前学習しておきたい．
-            - few-shotではダメ．commonsense は無限にあるので，commonsense reasoning したいならば，few-shotすら許されないはず．
-    - オープンドメインで何をやるか？
-* どのようにルールを獲得するか？ (学習するか)
-    - from dataset (e.g., CLUTRR)
-        - ILP
-    - pre-training
-        - commonsense
-    - ルールの精緻化
-        - 文脈による詳細化
-        - ルールのスコアの精度を上げる
-* abductionのopen-question (by 乾研)
-    - ルールを十分量獲得できるか？
-    - ルールをうまく組み合わせられるか？
-        - 教師あり
-            * reasoning データセットの
-        - 教師なし
-            * 教示は？
-    * ルールを有限時間で探索できるか？
-    - ルールをrefineできるか？
-        - 文脈による詳細化
-        - ルールのスコアの精度を上げる
-    * open world仮説にできるか？
-        - 自然言語処理の場合は，命題の数は無限なので，open world仮説が必要．
-    * 何ができるようになるのか？
-
-## modular vs e2e
-- modular
-    - Pros
-        * 証明に関する誠実性
-        * 説明性
-        * 各モジュールを再利用できるので，新規タスクでデータセットが必要ない．とくに，closed domain => open domain のtransfer
-            - モジュール
-                - ルール選択モジュール
-                - ファクトチェックモジュール
-                - 推論モジュール
-            - 「logical reasoningデータセットは無限に作れる」と仮定するならば，この特徴は不要．
-        * 問題の規模をスケールさせることができる．
-            * スケールしない理由
-                - fact / rule が多くなると，計算時間が発散．
-                - また，max_len問題もある．
-            * FaiRRでは，関連ルールだけを選択することで小規模の問題に分割して解いている．
-                * 例えば将来的には，factを外部DBに貯めて検索，などができるかもしれない．
-    - Cons
-        * 複雑化
-        * 性能が低い．最適化できないので．
-    - 備考: FaiRR 論文を参考のこと．
-- e2eは上記の逆
-
-## 評価案
-* CLUTRR
-    - 事前学習でlogical reasoningを学んでいれば，zero-shotで解けるはず．
-* COMET
-* Population論文
-* zero-shot on GLUE, RTE
-* alpha-NLI
-    - サチっていて厳しいかも．
-    - zero-shotで解くとか？
-* alpha-NLG
-    - zero-shotで解くとか？
-
-## 仮説を作るのに使えるモデル
-- GPT with prompt
-    * [gpt2 Hugging Face](https://huggingface.co/gpt2)
-- NLI (の逆方向版)を学修する．
-    * [roberta-large-mnli  Hugging Face](https://huggingface.co/roberta-large-mnli)
-- commonsense
-    * [Mosaic Knowledge Graphs - Commonsense Inferences about Entities and Events](https://mosaickg.apps.allenai.org/model_comet2020_people_events/)
-- commonsense KB
-
-## 論理推論に使えるモデル・ライブラリ
-* ccg2lambda
-    - 自然文を命題に変換する．
-    - 証明
-    - 仮説推論
-* Coq
-    - 証明
-* open-david
-    - 仮説推論
-* LangPro
-* [Reasoning — Logical Neural Networks  documentation](https://ibm.github.io/LNN/education/examples/reasoning.html)
-
-
-
-
+# 研究戦略
+- 大方針
+    * メインストリームを避ける．今，論理推論は加熱しつつある．
+    * 形式論理など，我々しか興味のないニッチを攻める．
+    * 落とし所として，デモなども考慮に入れること．ここのテーマは難しいので，中間的な成果が欲しい．
+- 優先idea
+    * [commonsense LM]($PROJECTS/commonsense-lanugage-model/README.md)
+    * [pending]
+        - 以下は一旦pending．理由は， 1. $PROJECTS/fairr-launcher が動かない 2. まだまだ工数がかかる 3. 論理推論界隈が加熱してきた，ことによる．
+            * 形式主義学習
+            * natural language injection
+            * カリキュラム学習
 
 
 
@@ -134,13 +35,23 @@
 # logical reasoning
 
 ## tmp
-* 論理の学習を"lets think step by step" プロンプトを入れてやっておき，別のタスクでそのプロンプトを入れて解かせる．
-    * 先行研究: [Large Language Models are Zero-Shot Reasoners](https://arxiv.org/abs/2205.11916)
+* SATとして解くか，proofとして解くか，どちらの方が性能が良いか．
+* soft-SAT reasoning
+* syntactic + semantic (SAT) のマルチタスク
+* logical pre-training
+    - 普通の言語モデル: 言語で学習 => 論理を解く
+    - ours: 論理を解く => 言語で学習
+    - 論理が言語構造をよく捉えているなら，性能が上がるはず．
 * 2項述語にして，関係抽出などと関係づける．
-
+* 論理体系pre-training
+    * modal-logicの場合，論理体系の解釈は複数ある．
+    * どれかをpivotにして，事前学習 -> fine-tuningのFWを作る．
+    * どれをpivotにするかというと，やはり，formal reasoningを行う．すなわち，"任意の記号"を学習させるために，ノイズを入れまくる．
 
 ## いける
+* [modal logic]($PROJECTS/modal-logic/ideas.md)
 * 形式主義学習 (flormal logic learning)
+    - [doing] $PROJECTS/fairr-launcher/, $PROJECTS/logical-reasoning
     - 研究の評価
         - [conclusion] **優先度高．** ただ，これだけだと自明かもしれないので，「記号論理カリキュラム学習」と一緒にやるべきか．
         - Pros
@@ -172,6 +83,7 @@
                 - 論文の本筋には関係無いはず．
                 - また，PRover, MultiProver, NeuralUnifier はCWAでやっている．
 * natural language injection (NL injection)
+    - [doing] $PROJECTS/fairr-launcher/, $PROJECTS/logical-reasoning
     - 経過: $PROJECTS/commonsense-lanugage-model/00.extract_eventualities_and_relations_from_cc100.py の出力で，S-V-Oなどのbegin/endを出す．これを使って，表層を操ることができる．
     - 研究の評価
         * [conclusion] **優先度高**
@@ -248,6 +160,7 @@
                 - ルール : 任意の組み合わせ (記号論理の原則に従う)
             - ルールに関しては，「自然言語のルール=常識知識によるルール」を対象とする，という考え方もできる．しかしそれは，記号論理の推論を捉えていない．推論の獲得と，ルールの獲得は，別の話である．常識知識ルールの利用は，また別のテーマとしてやるべきである．
 * 記号論理カリキュラム学習
+    - [doing] $PROJECTS/fairr-launcher/, $PROJECTS/logical-reasoning
     - 研究の評価:
         * [conclusion] **優先度高．** ただ，一気にここまではいけないので，他の研究の延長戦としてやる．
         * Pros
@@ -470,3 +383,120 @@
 ## additionsl
 * [accept] 自然言語 x 記号推論の初めてのPLMを出す
     - [accept] これは，additionalである．
+
+
+
+# 考察
+
+## ハイレベルな課題
+* どのようにreasoningするか(どのように学習させるか)．
+    - deduction
+    - abduction
+    - どのようにルールを組み合わせるか?
+        - ナイーブにやると発散
+        - また，ルールが増えるとTransformerのmax_lenに乗らなくなる
+        - 探索の効率
+    - 証明
+        - forward chainig
+        - backward chainig
+        - others: 何か効率の良いアルゴリズムはあるか？
+        * もっと複雑な証明ができるか？
+            - 複雑とは？
+                - length
+                - predicateの種類数
+                - 一度に組み合わせないといけないpredicateの数
+                - ファクトの数
+                - n項述語のn
+                - template言語でない．
+                - distractorがたくさん．
+            - RuleTaker論文のfuture workに書かれている．
+    - zero-shot
+        - CLUTRRはILPのタスクだが，これをzero-shotで解きたい．すなわち， 1. ruleの獲得 2. reasoningの学習 の両方を事前学習しておきたい．
+            - few-shotではダメ．commonsense は無限にあるので，commonsense reasoning したいならば，few-shotすら許されないはず．
+    - オープンドメインで何をやるか？
+* どのようにルールを獲得するか？ (学習するか)
+    - from dataset (e.g., CLUTRR)
+        - ILP
+    - pre-training
+        - commonsense
+    - ルールの精緻化
+        - 文脈による詳細化
+        - ルールのスコアの精度を上げる
+* abductionのopen-question (by 乾研)
+    - ルールを十分量獲得できるか？
+    - ルールをうまく組み合わせられるか？
+        - 教師あり
+            * reasoning データセットの
+        - 教師なし
+            * 教示は？
+    * ルールを有限時間で探索できるか？
+    - ルールをrefineできるか？
+        - 文脈による詳細化
+        - ルールのスコアの精度を上げる
+    * open world仮説にできるか？
+        - 自然言語処理の場合は，命題の数は無限なので，open world仮説が必要．
+    * 何ができるようになるのか？
+
+## modular vs e2e
+- modular
+    - Pros
+        * 証明に関する誠実性
+        * 説明性
+        * 各モジュールを再利用できるので，新規タスクでデータセットが必要ない．とくに，closed domain => open domain のtransfer
+            - モジュール
+                - ルール選択モジュール
+                - ファクトチェックモジュール
+                - 推論モジュール
+            - 「logical reasoningデータセットは無限に作れる」と仮定するならば，この特徴は不要．
+        * 問題の規模をスケールさせることができる．
+            * スケールしない理由
+                - fact / rule が多くなると，計算時間が発散．
+                - また，max_len問題もある．
+            * FaiRRでは，関連ルールだけを選択することで小規模の問題に分割して解いている．
+                * 例えば将来的には，factを外部DBに貯めて検索，などができるかもしれない．
+    - Cons
+        * 複雑化
+        * 性能が低い．最適化できないので．
+    - 備考: FaiRR 論文を参考のこと．
+- e2eは上記の逆
+
+## 評価案
+* CLUTRR
+    - 事前学習でlogical reasoningを学んでいれば，zero-shotで解けるはず．
+* COMET
+* Population論文
+* zero-shot on GLUE, RTE
+* alpha-NLI
+    - サチっていて厳しいかも．
+    - zero-shotで解くとか？
+* alpha-NLG
+    - zero-shotで解くとか？
+
+## 仮説を作るのに使えるモデル
+- GPT with prompt
+    * [gpt2 Hugging Face](https://huggingface.co/gpt2)
+- NLI (の逆方向版)を学修する．
+    * [roberta-large-mnli  Hugging Face](https://huggingface.co/roberta-large-mnli)
+- commonsense
+    * [Mosaic Knowledge Graphs - Commonsense Inferences about Entities and Events](https://mosaickg.apps.allenai.org/model_comet2020_people_events/)
+- commonsense KB
+
+## 論理推論に使えるモデル・ライブラリ
+* ccg2lambda
+    - 自然文を命題に変換する．
+    - 証明
+    - 仮説推論
+* Coq
+    - 証明
+* open-david
+    - 仮説推論
+* LangPro
+* [Reasoning — Logical Neural Networks  documentation](https://ibm.github.io/LNN/education/examples/reasoning.html)
+
+
+
+
+
+
+
+
