@@ -1,4 +1,16 @@
 # ideas.rejected
+* [rejected] verifier x MBRL
+    - 我々のタスク，教師あり学習ができる．探索は必要ない．
+* [rejected] syntactic + semantic (SAT) のマルチタスク
+    - [rejected] "syntax(proof generation)に対してsemantic(SAT)のマルチタスクは意味があるか？"
+    - 考察
+    - Pros
+        - 奇抜なので通りそう．
+    - Cons
+        - 上手くいくか不明．
+    - 手法
+    - 備考
+        - Pushing the limit をベースにするのが良い．
 * 「TransformerはStackを模擬できない」は，logical inferneceする上で課題になるか？ なるなら，解決が必要．
     - [rejected]
         * 我々の研究をやる上では，LSTMを上にのせて対応する．
