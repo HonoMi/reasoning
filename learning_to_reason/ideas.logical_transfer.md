@@ -1,3 +1,7 @@
+# todo
+* (森尾)に話してみる．
+
+
 # 背景
 * 背景1
     * LLMに工夫を加えることによって，ある程度の推論が解けることが分かった．
@@ -14,46 +18,64 @@
 
 
 
-# 研究の評価
-- [conclusion] **優先度高．**
+# LLMからの転移 (logical distillation)
 - Pros
-    - 工数はそこまで大きくない．
-    - うまくいったらとても面白い．
-    - 他の研究と一緒にできる．
+    - 面白いので，通るかもしれない．
+    - logical transfer と一緒にできる．
 - Cons
-    - うまくいくか不明．
+    - [todo] (是枝) LLMを何度も叩くことができるか？ 金銭上の問題．
+- 手法
+    - LLMに"think step by step" => 推論データセットを生成 => LMで学習
+- 備考
+    - tiny reasoner: distilling logical thinking from large pre-traeined language models
 
 
 
-# ideas
-* RuleTakerからの転移学習
-    * 背景
-        - 一方，生の推論タスクは人手コストがかかるので，証明を作りづらい．
-        * RuleTakerのような人工データセットならば自動でたくさん作れる．
-    * 何をどう転移させるのか？
+
+# RuleTakerからの転移
+
+## 背景
+* 一方，生の推論タスクは人手コストがかかるので，証明を作りづらい．
+* RuleTakerのような人工データセットならば自動でたくさん作れる．
+
+## 手法
+* モデルの工夫
     * prompt
+        - think step by step を入れて，事前学習時の推論能力をスタート地点にする．
         - RuleTakerで(question, "let's think step by step", answer)を学習させた後，ターゲットタスクで(question, "let's think step by step", X)のXを埋める．
         - あるいは，答えで条件付けて生成することを学習しておく？ hindsight に近い．
-* データセットの拡充
-    * サイズを大きくする
+* データの工夫
+    * [EntailmentBank](https://allenai.org/data/entailmentbank)との違いと対策．
+        1. EntailmentBankでは，atomic propositionの中に更に推論ルールが含まれる．
+            - 比較
+                - RuleTaker
+                    - "Allen is red"
+                - EntailmentBank
+                    - "eruptions produce ash clouds" (A->B)
+                    - "ash blocks sunlght" (B->C)
+            - ideas: 2に準じる．
+        2. 1の結果として，EntailmentBankでは，modus ponens 以外の推論(e.g., syllogistic)を使う必要がある．
+            - e.g.) "e"
+                1. "eruptions produce ash clouds" (A->B)
+                2. "ash blocks sunlght" (B->C)
+                3. 1 + 2 => eruptions block sunlght
+            - idea
+                - RuleTakerデータセットに多様な推論ルールを入れる．
+        3. EntailmentBankでの推論ルールは，多様な表現がある．
+            - e.g.)
+                * eruptions produce ash clouds.
+                * producers will die without sunlght = if sunlght then producers dies- 
+            * idea: 因果関係データセット・因果関係判定モデルなどで，以上のような因果関係文を収集し，RuleTakerデータセットに混ぜる．
+        4. EntailmentBankでは，明示されない知識も使う必要がある．
+            - e.g.) "plants are producers"
     * "記号論理カリキュラム学習"
     * "形式主義学習"
     * "natural language injection"
         - 人工データセットでやると命題の内容(Allen is red)に偏りが出る．これをmarginalizeするために=演繹能力だけをtransferするために，行う．
     * "logical pre-training"
-* logical distillation
-    - Pros
-        - 面白いので，通るかもしれない．
-        - logical transfer と一緒にできる．
-    - Cons
-        - [todo] (是枝) LLMを何度も叩くことができるか？ 金銭上の問題．
-    - 手法
-        - LLMに"think step by step" => 推論データセットを生成 => LMで学習
-    - 備考
-        - tiny reasoner: distilling logical thinking from large pre-traeined language models
-* LeapOfThoughtのように，内在的知識を必要とする推論に対してどうやって転移させるか？
-    - 人工データにおいて，一部のルールをわざと欠損させて推論させる．
-        - 欠損させるルールは，LMに内在するcommonsensen ruleである必要がある．よって，テキストから自動抽出したルールを使う．
+    * LeapOfThoughtのように，内在的知識を必要とする推論に対してどうやって転移させるか？
+        - 人工データにおいて，一部のルールをわざと欠損させて推論させる．
+            - 欠損させるルールは，LMに内在するcommonsensen ruleである必要がある．よって，テキストから自動抽出したルールを使う．
 
 ## 詳細
 * 記号論理カリキュラム学習
