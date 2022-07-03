@@ -30,6 +30,7 @@
     * 背景
         - 一方，生の推論タスクは人手コストがかかるので，証明を作りづらい．
         * RuleTakerのような人工データセットならば自動でたくさん作れる．
+    * 何をどう転移させるのか？
     * prompt
         - RuleTakerで(question, "let's think step by step", answer)を学習させた後，ターゲットタスクで(question, "let's think step by step", X)のXを埋める．
         - あるいは，答えで条件付けて生成することを学習しておく？ hindsight に近い．
