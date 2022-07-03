@@ -51,7 +51,8 @@
     - 備考
         - tiny reasoner: distilling logical thinking from large pre-traeined language models
 * LeapOfThoughtのように，内在的知識を必要とする推論に対してどうやって転移させるか？
-    - 人工データにおいて，一部のfactをわざと欠損させて推論させる．
+    - 人工データにおいて，一部のルールをわざと欠損させて推論させる．
+        - 欠損させるルールは，LMに内在するcommonsensen ruleである必要がある．よって，テキストから自動抽出したルールを使う．
 
 ## 詳細
 * 記号論理カリキュラム学習
